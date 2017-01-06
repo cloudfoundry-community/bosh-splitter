@@ -10,11 +10,17 @@ Updating large deployments of Cloud Foundry (400+ DEAs) will result in 36+ hour 
 
 The tool also prevents the need for making and maintaining multiple deployment repos and preserves creation of `manifest.yml` to allow for rollback.
 
+## Prerequisites
+
+You need to have the following:
+ - [Spruce 1.8.1](https://github.com/geofffranks/spruce) or newer
+ - A [Genesis](https://github.com/starkandwayne/genesis) style deployment architecture
+
 ## Example usage
 
 The Cloud Foundry deployment in `useast1-sb` was modified to extract each group of runners into it's own deployment.  Implementation was done in the following order:
  1. Creation of the `split` bash script
- 2. Modification of the environment level `Makefile`
+ 2. Modification of the environment level Genesis `Makefile`
  3. Modification of the site level `networking.yml`
  4. Create the core and runner manifests
  5. Deployment of manifest.yml with the new reserved range of ips
