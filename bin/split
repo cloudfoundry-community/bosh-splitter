@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+ set -e
+
+site=${1:?Usage: $0 <site> <environment> <output-file>}
+env=${2:?Usage: $0 <site> <environment> <output-file>}
+manifest=${3:?Usage: $0 <site> <environment> <output-file>}
+list_of_split_jobs=(${*:4})
+cd "$(dirname "${BASH_SOURCE[0]}")/../${site}/${env}"
+echo "Working in $(pwd)"
+
+# Run from the genesis-style site/env/manifest folder
+split_folder="manifests/split"
+
+jobs=($(spruce json "${manifest}" | jq '.jobs[].name' | tr -d '"'))
+deployment_name=($(spruce json "${manifest}" | jq '.name' | tr -d '"'))
+
+
+# Sanity tests
+if [[ ! -e "${manifest}" ]]; then
+  echo "Error: ${manifest} does not exist in manifests folder, nothing to split."
+  exit 1
+fi
+
+if [[ "${#list_of_split_jobs[@]}" -eq 0 ]]; then
+ echo "Error: The list of jobs to split was not provided, nothing to split"
+ exit 1
+fi
+
+
+
+# Create the split folder if it doesn't exist which will contain the intermediate (( delete ... )) yml files
+if [[ ! -d "$split_folder" ]]; then
+  mkdir "${split_folder}"
+fi
+
+## Generate manifest for a single job
+for job in "${list_of_split_jobs[@]}"; do
+(
+cat <<EOF
+---
+compilation:
+  network: ${job}
+name: ${deployment_name}-${job}
+jobs:
+EOF
+for inner_job in "${jobs[@]}"; do
+  if [[ ! " ${inner_job} " = " ${job} " ]]; then
+      echo "- (( delete \"${inner_job}\" ))"
+  fi
+done
+) > ${split_folder}/${job}.yml
+spruce merge $manifest ${split_folder}/${job}.yml > manifests/split_${job}.yml
+done
+
+
+## Generate manifest of all jobs excluding those which were split out
+(
+cat <<EOF
+---
+name: ${deployment_name}
+jobs:
+EOF
+for job in "${list_of_split_jobs[@]}"; do
+  echo "- (( delete \"${job}\" ))"
+done
+) > ${split_folder}/exclude_runners.yml
+spruce merge $manifest ${split_folder}/exclude_runners.yml > manifests/core.yml
+
+## Remove the temporary split_*.yml and core.yml files
+if [[ -d "$split_folder" ]]; then
+  rm -rf "${split_folder}"
+fi
+
+echo "Split complete"
