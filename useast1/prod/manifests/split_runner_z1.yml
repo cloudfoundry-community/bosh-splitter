@@ -1,0 +1,967 @@
+compilation:
+  cloud_properties:
+    availability_zone: us-east-1a
+    instance_type: c3.large
+  network: runner_z1
+  reuse_compilation_vms: true
+  workers: 6
+director_uuid: my_uuid
+jobs:
+- default_networks:
+  - name: cf1
+  instances: 10
+  name: runner_z1
+  networks:
+  - name: runner_z1
+  properties:
+    consul:
+      agent:
+        services:
+          dea:
+            check:
+              interval: 5m
+              name: dns_health_check
+              script: /var/vcap/jobs/dea_next/bin/dns_health_check
+              status: passing
+    dea_next:
+      zone: z1
+    metron_agent:
+      zone: z1
+  resource_pool: runner_z1
+  templates:
+  - name: consul_agent
+    release: cf
+  - name: dea_next
+    release: cf
+  - name: dea_logging_agent
+    release: cf
+  - name: metron_agent
+    release: cf
+  update:
+    max_in_flight: 1
+name: useast1-sb-cloudfoundry-runner_z1
+networks:
+- name: cf1
+  subnets:
+  - cloud_properties:
+      security_groups:
+      - cf
+      - ssh-cf
+      - bosh-agent
+      - shield-agent
+      subnet: subnet-xyz
+    dns:
+    - 10.50.32.2
+    gateway: 10.50.36.1
+    name: default_unused
+    range: 10.50.36.0/23
+    reserved:
+    - 10.50.36.2 - 10.50.36.9
+    - 10.50.37.0 - 10.50.37.254
+    static:
+    - 10.50.36.10 - 10.50.36.128
+    type: manual
+  type: manual
+- name: runner_z1
+  subnets:
+  - cloud_properties:
+      security_groups:
+      - cf
+      - ssh-cf
+      - bosh-agent
+      - shield-agent
+      - from-admin-host
+      subnet: subnet-xyz
+    dns:
+    - 10.50.32.2
+    gateway: 10.50.36.1
+    name: default_unused
+    range: 10.50.36.0/23
+    reserved:
+    - 10.50.36.2 - 10.50.36.255
+    type: manual
+  type: manual
+- name: cf2
+  subnets:
+  - cloud_properties:
+      security_groups:
+      - cf
+      - ssh-cf
+      - bosh-agent
+      - shield-agent
+      - from-admin-host
+      subnet: subnet-yyy
+    dns:
+    - 10.50.32.2
+    gateway: 10.50.38.1
+    name: default_unused
+    range: 10.50.38.0/23
+    reserved:
+    - 10.50.38.2 - 10.50.38.9
+    - 10.50.39.0 - 10.50.39.254
+    static:
+    - 10.50.38.10 - 10.50.38.128
+    type: manual
+  type: manual
+- name: runner_z2
+  subnets:
+  - cloud_properties:
+      security_groups:
+      - cf
+      - ssh-cf
+      - bosh-agent
+      - shield-agent
+      - from-admin-host
+      subnet: subnet-yyy
+    dns:
+    - 10.50.32.2
+    gateway: 10.50.38.1
+    name: default_unused
+    range: 10.50.38.0/23
+    reserved:
+    - 10.50.38.2 - 10.50.38.255
+    type: manual
+  type: manual
+properties:
+  acceptance_tests: null
+  app_domains:
+  - boshlite
+  app_ssh: null
+  blobstore:
+    admin_users: null
+    port: 8080
+    secure_link:
+      secret: null
+    tls:
+      ca_cert: null
+      cert: null
+      port: 4443
+      private_key: null
+  cc:
+    allow_app_ssh_access: true
+    allowed_cors_domains: []
+    app_events:
+      cutoff_age_in_days: 31
+    app_usage_events:
+      cutoff_age_in_days: 31
+    audit_events:
+      cutoff_age_in_days: 31
+    broker_client_default_async_poll_interval_seconds: null
+    broker_client_max_async_poll_duration_minutes: null
+    broker_client_timeout_seconds: 70
+    buildpacks:
+      blobstore_type: fog
+      buildpack_directory_key: boshlite-cc-buildpacks
+      cdn: null
+      fog_aws_storage_options: null
+      fog_connection:
+        aws_access_key_id: nope
+        aws_secret_access_key: nope
+        blobstore_timeout: 5
+        provider: AWS
+        region: us-east-1
+      webdav_config:
+        blobstore_timeout: 5
+        ca_cert: null
+        password: null
+        private_endpoint: https://blobstore.service.cf.internal:4443
+        public_endpoint: http://blobstore.boshlite
+        username: null
+    bulk_api_password: cc
+    client_max_body_size: 15M
+    db_encryption_key: cc
+    db_logging_level: debug2
+    dea_use_https: false
+    default_app_disk_in_mb: 1024
+    default_app_memory: 1024
+    default_app_ssh_access: null
+    default_buildpacks:
+    - name: staticfile_buildpack
+      package: staticfile-buildpack
+    - name: java_buildpack
+      package: java-buildpack
+    - name: ruby_buildpack
+      package: ruby-buildpack
+    - name: nodejs_buildpack
+      package: nodejs-buildpack
+    - name: go_buildpack
+      package: go-buildpack
+    - name: python_buildpack
+      package: python-buildpack
+    - name: php_buildpack
+      package: php-buildpack
+    - name: binary_buildpack
+      package: binary-buildpack
+    - name: dotnet_core_buildpack
+      package: dotnet-core-buildpack
+    default_health_check_timeout: 60
+    default_quota_definition: default
+    default_running_security_groups:
+    - public_networks
+    - dns
+    default_staging_security_groups:
+    - public_networks
+    - dns
+    default_to_diego_backend: false
+    development_mode: false
+    diego:
+      bbs:
+        url: null
+      insecure_docker_registry_list: null
+      pid_limit: null
+      temporary_local_apps: null
+      temporary_local_staging: null
+      temporary_local_tasks: null
+      use_privileged_containers_for_staging: null
+    directories: null
+    disable_custom_buildpacks: false
+    droplets:
+      blobstore_type: fog
+      cdn: null
+      droplet_directory_key: boshlite-cc-droplets
+      fog_aws_storage_options: null
+      fog_connection:
+        aws_access_key_id: nope
+        aws_secret_access_key: nope
+        blobstore_timeout: 5
+        provider: AWS
+        region: us-east-1
+      max_staged_droplets_stored: null
+      webdav_config:
+        blobstore_timeout: 5
+        ca_cert: null
+        password: null
+        private_endpoint: https://blobstore.service.cf.internal:4443
+        public_endpoint: http://blobstore.boshlite
+        username: null
+    external_host: api
+    external_port: 9022
+    external_protocol: null
+    install_buildpacks:
+    - name: staticfile_buildpack
+      package: staticfile-buildpack
+    - name: java_buildpack
+      package: java-buildpack
+    - name: ruby_buildpack
+      package: ruby-buildpack
+    - name: nodejs_buildpack
+      package: nodejs-buildpack
+    - name: go_buildpack
+      package: go-buildpack
+    - name: python_buildpack
+      package: python-buildpack
+    - name: php_buildpack
+      package: php-buildpack
+    - name: binary_buildpack
+      package: binary-buildpack
+    - name: dotnet_core_buildpack
+      package: dotnet-core-buildpack
+    internal_api_password: api_password
+    internal_api_user: internal_user
+    jobs:
+      app_bits_packer:
+        timeout_in_seconds: null
+      app_events_cleanup:
+        timeout_in_seconds: null
+      app_usage_events_cleanup:
+        timeout_in_seconds: null
+      blobstore_delete:
+        timeout_in_seconds: null
+      blobstore_upload:
+        timeout_in_seconds: null
+      droplet_deletion:
+        timeout_in_seconds: null
+      droplet_upload:
+        timeout_in_seconds: null
+      generic:
+        number_of_workers: null
+      global:
+        timeout_in_seconds: 14400
+    logging_level: debug2
+    maximum_app_disk_in_mb: 2048
+    maximum_health_check_timeout: 180
+    min_cli_version: null
+    min_recommended_cli_version: null
+    minimum_candidate_stagers: null
+    mutual_tls:
+      ca_cert: null
+      private_key: null
+      public_cert: null
+    newrelic:
+      capture_params: false
+      developer_mode: false
+      environment_name: null
+      license_key: null
+      monitor_mode: false
+      transaction_tracer:
+        enabled: true
+        record_sql: obfuscated
+    packages:
+      app_package_directory_key: boshlite-cc-packages
+      blobstore_type: fog
+      cdn: null
+      fog_aws_storage_options: null
+      fog_connection:
+        aws_access_key_id: nope
+        aws_secret_access_key: nope
+        blobstore_timeout: 5
+        provider: AWS
+        region: us-east-1
+      max_package_size: 1073741824
+      max_valid_packages_stored: null
+      webdav_config:
+        blobstore_timeout: 5
+        ca_cert: null
+        password: null
+        private_endpoint: https://blobstore.service.cf.internal:4443
+        public_endpoint: http://blobstore.boshlite
+        username: null
+    quota_definitions:
+      default:
+        memory_limit: 10240
+        non_basic_services_allowed: true
+        total_routes: 1000
+        total_service_keys: 1000
+        total_services: 100
+    rate_limiter: null
+    reserved_private_domains: null
+    resource_pool:
+      blobstore_type: fog
+      cdn: null
+      fog_aws_storage_options: null
+      fog_connection:
+        aws_access_key_id: nope
+        aws_secret_access_key: nope
+        blobstore_timeout: 5
+        provider: AWS
+        region: us-east-1
+      resource_directory_key: boshlite-cc-resources
+      webdav_config:
+        blobstore_timeout: 5
+        ca_cert: null
+        password: null
+        private_endpoint: https://blobstore.service.cf.internal:4443
+        public_endpoint: http://blobstore.boshlite
+        username: null
+    security_event_logging:
+      enabled: null
+    security_group_definitions:
+    - name: public_networks
+      rules:
+      - destination: 0.0.0.0-9.255.255.255
+        protocol: all
+      - destination: 11.0.0.0-169.253.255.255
+        protocol: all
+      - destination: 169.255.0.0-172.15.255.255
+        protocol: all
+      - destination: 172.32.0.0-192.167.255.255
+        protocol: all
+      - destination: 192.169.0.0-255.255.255.255
+        protocol: all
+    - name: dns
+      rules:
+      - destination: 0.0.0.0/0
+        ports: "53"
+        protocol: tcp
+      - destination: 0.0.0.0/0
+        ports: "53"
+        protocol: udp
+    service_usage_events:
+      cutoff_age_in_days: 31
+    srv_api_uri: https://api.boshlite
+    stacks: null
+    staging_upload_password: cc
+    staging_upload_user: cc
+    system_buildpacks:
+    - name: staticfile_buildpack
+      package: staticfile-buildpack
+    - name: java_buildpack
+      package: java-buildpack
+    - name: ruby_buildpack
+      package: ruby-buildpack
+    - name: nodejs_buildpack
+      package: nodejs-buildpack
+    - name: go_buildpack
+      package: go-buildpack
+    - name: python_buildpack
+      package: python-buildpack
+    - name: php_buildpack
+      package: php-buildpack
+    - name: binary_buildpack
+      package: binary-buildpack
+    - name: dotnet_core_buildpack
+      package: dotnet-core-buildpack
+    system_hostnames: null
+    thresholds:
+      api:
+        alert_if_above_mb: null
+        restart_if_above_mb: null
+        restart_if_consistently_above_mb: null
+      worker:
+        alert_if_above_mb: null
+        restart_if_above_mb: null
+        restart_if_consistently_above_mb: null
+    tls_port: null
+    user_buildpacks: []
+    users_can_select_backend: true
+    volume_services_enabled: null
+    webdav_config:
+      blobstore_timeout: 5
+      ca_cert: null
+      password: null
+      private_endpoint: https://blobstore.service.cf.internal:4443
+      public_endpoint: http://blobstore.boshlite
+      username: null
+  ccdb: ccdb
+  collector: null
+  consul:
+    agent:
+      domain: cf.internal
+      log_level: null
+      servers:
+        lan:
+        - 10.50.36.37
+        - 10.50.36.38
+        - 10.50.38.37
+    agent_cert: null
+    agent_key: null
+    ca_cert: null
+    dns_config: null
+    encrypt_keys: null
+    server_cert: null
+    server_key: null
+  databases: null
+  dea_next:
+    advertise_interval_in_seconds: 5
+    allow_host_access: null
+    allow_networks:
+    - 10.10.0.2/32
+    ca_cert: null
+    client_cert: null
+    client_key: null
+    default_health_check_timeout: 60
+    deny_networks:
+    - 169.254.0.0/16
+    - 10.10.0.0/16
+    directory_server_protocol: https
+    disk_mb: null
+    disk_overcommit_factor: null
+    enable_ssl: false
+    evacuation_bail_out_time_in_seconds: 600
+    heartbeat_interval_in_seconds: 10
+    instance_bandwidth_limit: null
+    instance_disk_inode_limit: 200000
+    kernel_network_tuning_enabled: true
+    logging_level: debug
+    memory_mb: null
+    memory_overcommit_factor: null
+    mtu: null
+    post_setup_hook: null
+    rlimit_core: 0
+    server_cert: null
+    server_key: null
+    staging_bandwidth_limit: null
+    staging_disk_inode_limit: 200000
+    staging_disk_limit_mb: 4096
+    staging_memory_limit_mb: 1024
+  description: null
+  disk_quota_enabled: true
+  doppler:
+    blacklisted_syslog_ranges: null
+    debug: false
+    etcd:
+      client_cert: ""
+      client_key: ""
+    maxRetainedLogMessages: 100
+    message_drain_buffer_size: null
+    outgoing_port: 8081
+    port: 4443
+    tls:
+      enable: null
+      port: null
+      server_cert: null
+      server_key: null
+    unmarshaller_count: 5
+    zone: null
+  doppler_endpoint:
+    shared_secret: shared_secret
+  dropsonde:
+    enabled: true
+  etcd:
+    advertise_urls_dns_suffix: cf-etcd.service.cf.internal
+    ca_cert: ""
+    client_cert: ""
+    client_key: ""
+    cluster:
+    - instances: 2
+      name: etcd_z1
+    - instances: 1
+      name: etcd_z2
+    machines:
+    - 10.50.36.20
+    - 10.50.36.35
+    - 10.50.38.19
+    peer_ca_cert: ""
+    peer_cert: ""
+    peer_key: ""
+    peer_require_ssl: false
+    require_ssl: false
+    server_cert: ""
+    server_key: ""
+  etcd_metrics_server:
+    etcd:
+      ca_cert: ""
+      client_cert: ""
+      client_key: ""
+      dns_suffix: cf-etcd.service.cf.internal
+      require_ssl: false
+  ha_proxy: null
+  hm9000:
+    ca_cert: null
+    client_cert: null
+    client_key: null
+    etcd:
+      ca_cert: ""
+      client_cert: ""
+      client_key: ""
+      machines:
+      - cf-etcd.service.cf.internal
+      require_ssl: false
+    port: 5155
+    server_cert: null
+    server_key: null
+    url: https://hm9000.boshlite
+  logger_endpoint:
+    port: 4443
+  loggregator:
+    blacklisted_syslog_ranges:
+    - end: 10.10.255.255
+      start: 10.10.0.0
+    debug: false
+    etcd:
+      ca_cert: ""
+      machines:
+      - cf-etcd.service.cf.internal
+      require_ssl: false
+    maxRetainedLogMessages: 100
+    outgoing_dropsonde_port: 8081
+    tls:
+      ca_cert: null
+      doppler:
+        cert: null
+        key: null
+      metron:
+        cert: null
+        key: null
+      trafficcontroller:
+        cert: null
+        key: null
+  loggregator_endpoint:
+    shared_secret: shared_secret
+  login:
+    analytics:
+      code: null
+      domain: null
+    asset_base_url: null
+    brand: oss
+    branding: null
+    catalina_opts: null
+    enabled: true
+    links:
+      passwd: https://login.boshlite/forgot_password
+      signup: https://login.boshlite/create_account
+    logout: null
+    messages: null
+    notifications:
+      url: null
+    protocol: null
+    restricted_ips_regex: null
+    saml: null
+    self_service_links_enabled: null
+    smtp:
+      host: null
+      password: null
+      port: null
+      user: null
+    url: null
+  metron_agent:
+    deployment: null
+    etcd:
+      client_cert: ""
+      client_key: ""
+    preferred_protocol: null
+    protocols: null
+    tls:
+      client_cert: null
+      client_key: null
+  metron_endpoint:
+    shared_secret: shared_secret
+  nats:
+    debug: false
+    machines:
+    - 10.50.36.11
+    - 10.50.38.11
+    monitor_port: 0
+    password: nats
+    port: 4222
+    prof_port: 0
+    trace: false
+    user: nats
+  nfs_server:
+    address: null
+    allow_from_entries:
+    - 10.50.36.0/23
+    - 10.50.38.0/23
+    share: null
+  request_timeout_in_seconds: 900
+  router:
+    balancing_algorithm: null
+    cipher_suites: null
+    debug_address: null
+    drain_wait: null
+    enable_access_log_streaming: null
+    enable_proxy: null
+    enable_ssl: null
+    extra_headers_to_log: null
+    force_forwarded_proto_https: null
+    healthcheck_user_agent: null
+    load_balancer_healthy_threshold: null
+    logging_level: null
+    logrotate: null
+    port: null
+    requested_route_registration_interval_in_seconds: null
+    route_services_recommend_https: null
+    route_services_secret: null
+    route_services_secret_decrypt_only: null
+    route_services_timeout: null
+    secure_cookies: null
+    ssl_cert: null
+    ssl_key: null
+    ssl_skip_validation: null
+    status:
+      password: password
+      port: null
+      user: user
+    suspend_pruning_if_nats_unavailable: null
+    tracing:
+      enable_zipkin: null
+  routing_api:
+    enabled: null
+    port: null
+    uri: null
+  smoke_tests: null
+  ssl:
+    skip_cert_verify: false
+  support_address: http://support.cloudfoundry.com
+  syslog_daemon_config: null
+  syslog_drain_binder:
+    etcd:
+      client_cert: ""
+      client_key: ""
+  system_domain: boshlite
+  system_domain_organization: null
+  template_only:
+    aws:
+      access_key_id: nope
+      availability_zone: us-east-1a
+      availability_zone2: us-east-1b
+      secret_access_key: nope
+  traffic_controller:
+    disable_access_control: null
+    etcd:
+      client_cert: ""
+      client_key: ""
+    security_event_logging:
+      enabled: false
+    zone: null
+  uaa:
+    admin:
+      client_secret: client_secret
+    authentication:
+      policy:
+        countFailuresWithinSeconds: null
+        lockoutAfterFailures: null
+        lockoutPeriodSeconds: null
+    ca_cert: null
+    catalina_opts: null
+    cc:
+      client_secret: client_secret
+    clients:
+      cc-service-dashboards:
+        authorities: clients.read,clients.write,clients.admin
+        authorized-grant-types: authorization_code,client_credentials
+        scope: openid,cloud_controller_service_permissions.read
+        secret: my_secret
+      cc_routing:
+        authorities: routing.router_groups.read
+        authorized-grant-types: client_credentials
+        secret: my_secret
+      cf:
+        access-token-validity: 600
+        authorities: uaa.none
+        authorized-grant-types: password,refresh_token
+        override: true
+        refresh-token-validity: 604800
+        scope: cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,cloud_controller.admin_read_only,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read,routing.router_groups.write
+      cloud_controller_username_lookup:
+        authorities: scim.userids
+        authorized-grant-types: client_credentials
+        secret: my_secret
+      doppler:
+        authorities: uaa.resource
+        override: true
+        secret: shared_secret
+      gorouter:
+        authorities: routing.routes.read
+        authorized-grant-types: client_credentials,refresh_token
+        secret: my_secret
+      login:
+        authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
+        authorized-grant-types: authorization_code,client_credentials,refresh_token
+        autoapprove: true
+        override: true
+        redirect-uri: https://login.boshlite
+        scope: openid,oauth.approvals
+        secret: login_secret
+      notifications:
+        authorities: cloud_controller.admin,scim.read
+        authorized-grant-types: client_credentials
+        secret: my_secret
+      tcp_emitter:
+        authorities: routing.routes.write,routing.routes.read
+        authorized-grant-types: client_credentials,refresh_token
+        secret: my_secret
+      tcp_router:
+        authorities: routing.routes.read
+        authorized-grant-types: client_credentials,refresh_token
+        secret: my_secret
+    database: null
+    issuer: https://uaa.boshlite
+    jwt: jwt
+    ldap: null
+    login: null
+    newrelic: null
+    no_ssl: null
+    password:
+      policy:
+        minLength: null
+        requireDigit: null
+        requireLowerCaseCharacter: null
+        requireSpecialCharacter: null
+        requireUpperCaseCharacter: null
+    port: 8080
+    require_https: null
+    scim:
+      external_groups: null
+      groups: null
+      userids_enabled: true
+      users: scim_user
+    ssl:
+      port: 8443
+    sslCertificate: null
+    sslPrivateKey: null
+    token_endpoint: null
+    url: https://uaa.boshlite
+    user:
+      authorities:
+      - openid
+      - scim.me
+      - cloud_controller.read
+      - cloud_controller.write
+      - cloud_controller_service_permissions.read
+      - password.write
+      - uaa.user
+      - approvals.me
+      - oauth.approvals
+      - notification_preferences.read
+      - notification_preferences.write
+      - profile
+      - roles
+      - user_attributes
+      - cloud_controller.user
+      - actuator.read
+    zones:
+      internal:
+        hostnames:
+        - uaa.service.cf.internal
+  uaadb: uaadb
+releases:
+- name: cf
+  version: latest
+resource_pools:
+- cloud_properties:
+    availability_zone: us-east-1a
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: m3.medium
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: small_z1
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1b
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: m3.medium
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: small_z2
+  network: cf2
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: m3.medium
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: medium_z1
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1b
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: m3.medium
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: medium_z2
+  network: cf2
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    ephemeral_disk:
+      size: 65536
+      type: gp2
+    instance_type: m3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: large_z1
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1b
+    ephemeral_disk:
+      size: 65536
+      type: gp2
+    instance_type: m3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: large_z2
+  network: cf2
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    ephemeral_disk:
+      size: 102400
+      type: gp2
+    instance_type: m3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: runner_z1
+  network: runner_z1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1b
+    ephemeral_disk:
+      size: 102400
+      type: gp2
+    instance_type: m3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: runner_z2
+  network: runner_z2
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    elbs:
+    - cfrouter
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: c3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: router_z1
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1b
+    elbs:
+    - cfrouter
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: c3.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: router_z2
+  network: cf2
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    ephemeral_disk:
+      size: 10240
+      type: gp2
+    instance_type: m3.medium
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: small_errand
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+- cloud_properties:
+    availability_zone: us-east-1a
+    instance_type: c3.xlarge
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: xlarge_errand
+  network: cf1
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  max_in_flight: 1
+  serial: true
+  update_watch_time: 5000-600000
+
