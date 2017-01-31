@@ -42,11 +42,11 @@ A few notes about its execution:
 
 ### Step 2 - Modify Makefile
 
-This step needs to be performed for each environment where BOSH Splitter will be used.  Modify the Makefile and add a space delimited list of job names you would like stripped out of manifest.yml into their own deployment manifest files.  A `split` task also needs to be added.
+This step needs to be performed for each environment where BOSH Splitter will be used.  Modify the Makefile and add a space delimited list of job names you would like stripped out of manifest.yml into their own deployment manifest files.  A `split` task also needs to be added.  In the `useast1/prod` folder a small Makefile already exists which can be modified to your own needs.
 
 ```
 ...
-SPLIT_JOBS := "runner_z1 runner_z2 runner_small_z1 runner_small_z2"
+SPLIT_JOBS := "runner_z1 runner_z2"
 ...
 split:
 	@../../bin/split "$(BUILD_SITE)" "$(BUILD_ENV)" "$(TO)" "$(SPLIT_JOBS)"
@@ -56,9 +56,10 @@ split:
 
 ### Step 3 - Site Level Networking Changes
 
+#TODO: Make this match the example in this repo  
 The networking groups need to be split.  One new networking group needs to be added for each job which is being split out.  Each network cannot overlap the available range of floating ips.
 
-In `useast1-sb` networks cf1 and cf2 were modified to only use the first 256 ips in the original ranges (added to `reserved:`).  Each had a /23 network assigned as the range.  `cf1_runner`, `cf1_runner_small`, `cf2_runner` and `cf2_runner_small` were created by wholesale copying the corresponding `cf1` and `cf2` and adding to `reserved:` so `cf*_runner` used ips 257 - 385 and `cf*_runner_small` used ips 386 - 512.
+In `useast1-sb` networks cf1 and cf2 were modified to only use the first 256 ips in the original ranges (added to `reserved:`).  Each had a /23 network assigned as the range.  `cf1_runner`, and `cf2_runner` were created by wholesale copying the corresponding `cf1` and `cf2` and adding to `reserved:` so `cf*_runner` used ips 257 - 385 and `cf*_runner_small` used ips 386 - 512.
 
 Leveraging BOSH v2 may get around this restriction.
 
