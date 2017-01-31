@@ -18,7 +18,7 @@ You need to have the following:
 
 ## Example usage
 
-The Cloud Foundry deployment in `useast1-sb` was modified to extract each group of runners into it's own deployment.  Implementation was done in the following order:
+The Cloud Foundry deployment in `useast1-sb` was modified to extract each group of runners into its own deployment.  Implementation was done in the following order:
  1. Creation of the `split` bash script
  2. Modification of the environment level Genesis `Makefile`
  3. Modification of the site level `networking.yml`
@@ -31,11 +31,11 @@ The Cloud Foundry deployment in `useast1-sb` was modified to extract each group 
 
 This is a one time activity and has already been done in this repo.  If BOSH Splitter is desired in other deployment repos simply copy it and place it into the `bin/` folder and make it executable.
 
-A few notes about it's execution:
- - It requires command line parameters to be passed to it.  See the `Makefile` as an example.  It should likely only be run from a `make split` command.
+A few notes about its execution:
+ - It requires command line parameters to be passed to it.  See the `Makefile` as an example.  It should likely only be run from a `make refresh manifest split` command.
  - A temporary folder and yml files will be created in `<site>/<env>/scripts` and is removed at the end of the script execution.  If the script errors out these files may be left behind and can be ignored as they will be removed on the next successful execution of the script.
  - `manifest.yml` is used as the source of the split and should be updated before running BOSH Splitter.
- - The script takes the list of jobs to split out of the manifest.yml as command line arguments.  Each job specified will have it's own deployment manifest file created.
+ - The script takes the list of jobs to split out of the manifest.yml as command line arguments.  Each job specified will have its own deployment manifest file created.
  - When BOSH Splitter is executed the following files are created in the `manifests/` folder:
    - core.yml - Is the `manifest.yml` with the jobs specified on the command line removed.  It preserves the deployment name in manifest.yml
    - split_{job_name}.yml - This is the `manifest.yml` with all but a single job removed.  The job name is appended to the deployment name in manifest.yml so when BOSH deployed a new deployment is created.
