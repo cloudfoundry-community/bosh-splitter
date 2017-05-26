@@ -1,3 +1,5 @@
+![Logo](images/bosh-splitter-logo.png)
+
 # BOSH Splitter
 
 ## Overview
